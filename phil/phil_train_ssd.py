@@ -219,8 +219,9 @@ if __name__ == '__main__':
     custom_config = args.custom_config
     if custom_config is not None:
         # config = CustomConfig.from_json(custom_config)
-        create_net,config = get_model_fns(custom_config)
+        create_net,config,model_name = get_model_fns(custom_config)
     else:
+        model_name = args.net
         if args.net == 'vgg16-ssd':
             create_net = create_vgg_ssd
             config = vgg_ssd_config
@@ -404,7 +405,7 @@ if __name__ == '__main__':
                 f"Validation Classification Loss: {val_classification_loss:.4f}"
             )
             model_path = os.path.join(
-                args.checkpoint_folder, f"{args.net}-Epoch-{epoch}-Loss-{val_loss}.pth")
+                args.checkpoint_folder, f"{model_name}-Epoch-{epoch}-Loss-{val_loss}.pth")
             net.save(model_path)
             logging.info(f"Saved model {model_path}")
 

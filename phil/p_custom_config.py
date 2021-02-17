@@ -74,7 +74,7 @@ def get_model_fns(json_path):
     model_name = json_dict["net"]
     model_params = json_dict["model_params"]
     create_net = get_create_net(model_name,model_params)
-    return create_net,config
+    return create_net,config,model_name
 
 class CustomConfig(object):
     def __init__(self, image_size, image_mean, image_std,
