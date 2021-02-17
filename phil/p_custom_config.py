@@ -25,6 +25,10 @@ import json
 
 import numpy as np
 from vision.utils.box_utils import SSDSpec, SSDBoxSizes, generate_ssd_priors
+from vision.ssd.squeezenet_ssd_lite import create_squeezenet_ssd_lite
+from vision.ssd.mobilenet_v2_ssd_lite import create_mobilenetv2_ssd_lite
+from vision.ssd.mobilenetv1_ssd_lite import create_mobilenetv1_ssd_lite
+from vision.ssd.mobilenetv1_ssd import create_mobilenetv1_ssd
 
 # relative path hack
 test_path = os.path.join(os.path.dirname(__file__), '..', 'Common')
@@ -36,6 +40,41 @@ python_ssd_traindir = os.path.join(
     parentdir, 'python', 'training', 'detection', 'ssd')
 sys.path.append(python_ssd_traindir)
 
+
+
+def get_create_net(model_name,model_params):
+    if model_name == 'vgg16-ssd':
+        create_net = create_vgg_ssd
+        def create_net(num): return create_vgg_ssd(
+            num, **model_params)
+    elif model_name == 'mb1-ssd':
+        create_net = create_mobilenetv1_ssd
+        def create_net(num): return create_mobilenetv1_ssd(
+            num, **model_params)
+    elif model_name == 'mb1-ssd-lite':
+        create_net = create_mobilenetv1_ssd_lite
+        def create_net(num): return create_mobilenetv1_ssd_lite(
+            num, **model_params)
+    elif model_name == 'sq-ssd-lite':
+        create_net = create_squeezenet_ssd_lite
+        def create_net(num): return create_squeezenet_ssd_lite(
+            num, **model_params)
+    elif model_name == 'mb2-ssd-lite':
+        def create_net(num): return create_mobilenetv2_ssd_lite(
+            num, **model_params)
+    else:
+        raise Exception("The net type is wrong.")
+
+    return create_net
+
+def get_model_fns(json_path):
+    json_dict = json.load(open(json_path, 'r'))
+    config_dict = json_dict['config']
+    config = CustomConfig.from_json_dict(config_dict)
+    model_name = json_dict["net"]
+    model_params = json_dict["model_params"]
+    create_net = get_create_net(model_name,model_params)
+    return create_net,config
 
 class CustomConfig(object):
     def __init__(self, image_size, image_mean, image_std,

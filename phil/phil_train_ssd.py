@@ -38,7 +38,7 @@ from vision.utils.misc import str2bool, Timer, freeze_net_layers, store_labels
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from torch.utils.data import DataLoader, ConcatDataset
 
-from p_custom_config import CustomConfig
+from p_custom_config import CustomConfig,get_model_fns
 
 parser = argparse.ArgumentParser(
     description='Single Shot MultiBox Detector Training With PyTorch')
@@ -63,7 +63,9 @@ parser.add_argument('--mb2-width-mult', default=1.0, type=float,
 
 # Params for loading pretrained basenet or checkpoints.
 parser.add_argument('--base-net', help='Pretrained base model')
-parser.add_argument('--pretrained-ssd', default='models/mobilenet-v1-ssd-mp-0_675.pth',
+parser.add_argument('--pretrained-ssd', 
+                    # default='models/mobilenet-v1-ssd-mp-0_675.pth',
+                    default=None,
                     type=str, help='Pre-trained base model')
 parser.add_argument('--resume', default=None, type=str,
                     help='Checkpoint state_dict file to resume training from')
@@ -214,30 +216,33 @@ if __name__ == '__main__':
     
 
     # select the network architecture and config
-    if args.net == 'vgg16-ssd':
-        create_net = create_vgg_ssd
-        config = vgg_ssd_config
-    elif args.net == 'mb1-ssd':
-        create_net = create_mobilenetv1_ssd
-        config = mobilenetv1_ssd_config
-    elif args.net == 'mb1-ssd-lite':
-        create_net = create_mobilenetv1_ssd_lite
-        config = mobilenetv1_ssd_config
-    elif args.net == 'sq-ssd-lite':
-        create_net = create_squeezenet_ssd_lite
-        config = squeezenet_ssd_config
-    elif args.net == 'mb2-ssd-lite':
-        def create_net(num): return create_mobilenetv2_ssd_lite(
-            num, width_mult=args.mb2_width_mult)
-        config = mobilenetv1_ssd_config
-    else:
-        logging.fatal("The net type is wrong.")
-        parser.print_help(sys.stderr)
-        sys.exit(1)
-
     custom_config = args.custom_config
     if custom_config is not None:
-        config = CustomConfig.from_json(custom_config)
+        # config = CustomConfig.from_json(custom_config)
+        create_net,config = get_model_fns(custom_config)
+    else:
+        if args.net == 'vgg16-ssd':
+            create_net = create_vgg_ssd
+            config = vgg_ssd_config
+        elif args.net == 'mb1-ssd':
+            create_net = create_mobilenetv1_ssd
+            config = mobilenetv1_ssd_config
+        elif args.net == 'mb1-ssd-lite':
+            create_net = create_mobilenetv1_ssd_lite
+            config = mobilenetv1_ssd_config
+        elif args.net == 'sq-ssd-lite':
+            create_net = create_squeezenet_ssd_lite
+            config = squeezenet_ssd_config
+        elif args.net == 'mb2-ssd-lite':
+            def create_net(num): return create_mobilenetv2_ssd_lite(
+                num, width_mult=args.mb2_width_mult)
+            config = mobilenetv1_ssd_config
+        else:
+            logging.fatal("The net type is wrong.")
+            parser.print_help(sys.stderr)
+            sys.exit(1)
+
+
 
     # create data transforms for train/test/val
     train_transform = TrainAugmentation(
