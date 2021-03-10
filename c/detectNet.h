@@ -194,7 +194,8 @@ public:
 #if NV_TENSORRT_MAJOR > 4
 		SSD_MOBILENET_V1,	/**< SSD Mobilenet-v1 UFF model, trained on MS-COCO */
 		SSD_MOBILENET_V2,	/**< SSD Mobilenet-v2 UFF model, trained on MS-COCO */
-		SSD_INCEPTION_V2	/**< SSD Inception-v2 UFF model, trained on MS-COCO */
+		SSD_INCEPTION_V2,	/**< SSD Inception-v2 UFF model, trained on MS-COCO */
+		SSD_CUSTOM
 #endif
 	};
 

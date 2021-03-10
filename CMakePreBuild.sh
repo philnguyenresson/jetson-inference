@@ -43,8 +43,9 @@ $SUDO apt-get update
 
 # download/install models and PyTorch
 if [ $BUILD_CONTAINER = "NO" ]; then
-	./download-models.sh $BUILD_INTERACTIVE
-	./install-pytorch.sh $BUILD_INTERACTIVE
+	echo "skipping model download and pytorch install, see tools/download-models.sh, tools/install-pytorch.sh";
+	#./download-models.sh $BUILD_INTERACTIVE
+	#./install-pytorch.sh $BUILD_INTERACTIVE
 else
 	# in container, the models are mounted and PyTorch is already installed
 	echo "Running in Docker container => skipping model downloads";

@@ -267,6 +267,10 @@ detectNet* detectNet::Create( NetworkType networkType, float threshold, uint32_t
 		return Create("networks/SSD-Mobilenet-v1/ssd_mobilenet_v1_coco.uff", "networks/SSD-Mobilenet-v1/ssd_coco_labels.txt", threshold, "Input", Dims3(3,300,300), "Postprocessor", "Postprocessor_1", maxBatchSize, precision, device, allowGPUFallback);
 	else if( networkType == SSD_MOBILENET_V2 )
 		return Create("networks/SSD-Mobilenet-v2/ssd_mobilenet_v2_coco.uff", "networks/SSD-Mobilenet-v2/ssd_coco_labels.txt", threshold, "Input", Dims3(3,300,300), "NMS", "NMS_1", maxBatchSize, precision, device, allowGPUFallback);
+	else if( networkType == SSD_CUSTOM )
+		return Create("networks/SSD-Inception-Custom-v2/ssd_inception_v2_coco.uff", "networks/SSD-Inception-Custom-v2/ssd_coco_labels.txt", threshold, "Input", Dims3(3,300,300), "NMS", "NMS_1", maxBatchSize, precision, device, allowGPUFallback);
+
+
 #endif
 	else
 		return NULL;
@@ -320,6 +324,8 @@ detectNet::NetworkType detectNet::NetworkTypeFromStr( const char* modelName )
 		type = detectNet::SSD_MOBILENET_V1;
 	else if( strcasecmp(modelName, "ssd-mobilenet-v2") == 0 || strcasecmp(modelName, "coco-ssd-mobilenet-v2") == 0 || strcasecmp(modelName, "ssd-mobilenet") == 0 )
 		type = detectNet::SSD_MOBILENET_V2;
+	else if( strcasecmp(modelName, "ssd-custom") == 0 )
+		type = detectNet::SSD_CUSTOM;
 #endif
 	else
 		type = detectNet::CUSTOM;
