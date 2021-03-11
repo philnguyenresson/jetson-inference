@@ -666,14 +666,14 @@ inline static bool rectOverlap(const float6& r1, const float6& r2)
 
 
 // Detect
-int detectNet::Detect( float* input, uint32_t width, uint32_t height, Detection** detections, uint32_t overlay )
+int detectNet::Detect( float* input, uint32_t width, uint32_t height, Detection** detections, uint32_t overlay, bool force_rgb )
 {
-	return Detect((void*)input, width, height, IMAGE_RGBA32F, detections, overlay);
+	return Detect((void*)input, width, height, IMAGE_RGBA32F, detections, overlay,force_rgb);
 }
 
 
 // Detect
-int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat format, Detection** detections, uint32_t overlay )
+int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat format, Detection** detections, uint32_t overlay, bool force_rgb )
 {
 	Detection* det = mDetectionSets[0] + mDetectionSet * GetMaxDetections();
 
@@ -685,19 +685,19 @@ int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat
 	if( mDetectionSet >= mNumDetectionSets )
 		mDetectionSet = 0;
 	
-	return Detect(input, width, height, format, det, overlay);
+	return Detect(input, width, height, format, det, overlay,force_rgb);
 }
 
 
 // Detect
-int detectNet::Detect( float* input, uint32_t width, uint32_t height, Detection* detections, uint32_t overlay )
+int detectNet::Detect( float* input, uint32_t width, uint32_t height, Detection* detections, uint32_t overlay, bool force_rgb )
 {
-	return Detect((void*)input, width, height, IMAGE_RGBA32F, detections, overlay);
+	return Detect((void*)input, width, height, IMAGE_RGBA32F, detections, overlay, force_rgb);
 }
 
 
 // Detect
-int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat format, Detection* detections, uint32_t overlay )
+int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat format, Detection* detections, uint32_t overlay, bool force_rgb )
 {
 	if( !input || width == 0 || height == 0 || !detections )
 	{
@@ -721,12 +721,25 @@ int detectNet::Detect( void* input, uint32_t width, uint32_t height, imageFormat
 
 	if( IsModelType(MODEL_UFF) )
 	{
-		if( CUDA_FAILED(cudaTensorNormBGR(input, format, width, height, 
-								    mInputs[0].CUDA, GetInputWidth(), GetInputHeight(),
-								    make_float2(-1.0f, 1.0f), GetStream())) )
-		{
-			LogError(LOG_TRT "detectNet::Detect() -- cudaTensorNormBGR() failed\n");
-			return -1;
+		if (force_rgb){
+			if( CUDA_FAILED(cudaTensorNormRGB(input, format, width, height, 
+										mInputs[0].CUDA, GetInputWidth(), GetInputHeight(),
+										make_float2(-1.0f, 1.0f), GetStream())) )
+			{
+				LogError(LOG_TRT "detectNet::Detect() -- cudaTensorNormRGB() failed\n");
+				return -1;
+			}
+		}
+		else{
+
+		
+			if( CUDA_FAILED(cudaTensorNormBGR(input, format, width, height, 
+										mInputs[0].CUDA, GetInputWidth(), GetInputHeight(),
+										make_float2(-1.0f, 1.0f), GetStream())) )
+			{
+				LogError(LOG_TRT "detectNet::Detect() -- cudaTensorNormBGR() failed\n");
+				return -1;
+			}
 		}
 	}
 	else if( IsModelType(MODEL_ONNX) )

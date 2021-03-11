@@ -589,12 +589,13 @@ static PyObject* PyDetectNet_Detect( PyDetectNet_Object* self, PyObject* args, P
 
 	int width = 0;
 	int height = 0;
+	bool force_rgb = false;
 
 	const char* overlay    = "box,labels,conf";
 	const char* format_str = "rgba32f";
-	static char* kwlist[]  = {"image", "width", "height", "overlay", "format", NULL};
+	static char* kwlist[]  = {"image", "width", "height", "overlay", "format","force_rgb", NULL};
 
-	if( !PyArg_ParseTupleAndKeywords(args, kwds, "O|iiss", kwlist, &capsule, &width, &height, &overlay, &format_str))
+	if( !PyArg_ParseTupleAndKeywords(args, kwds, "O|iissp", kwlist, &capsule, &width, &height, &overlay, &format_str,&force_rgb))
 	{
 		PyErr_SetString(PyExc_Exception, LOG_PY_INFERENCE "detectNet.Detect() failed to parse args tuple");
 		return NULL;
@@ -612,7 +613,7 @@ static PyObject* PyDetectNet_Detect( PyDetectNet_Object* self, PyObject* args, P
 	// run the object detection
 	detectNet::Detection* detections = NULL;
 
-	const int numDetections = self->net->Detect(ptr, width, height, format, &detections, detectNet::OverlayFlagsFromStr(overlay));
+	const int numDetections = self->net->Detect(ptr, width, height, format, &detections, detectNet::OverlayFlagsFromStr(overlay),force_rgb);
 
 	if( numDetections < 0 )
 	{

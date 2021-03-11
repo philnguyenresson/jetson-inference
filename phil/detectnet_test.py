@@ -55,7 +55,7 @@ img = jetson.utils.loadImage(opt.input_image)
 
 start = time.time()
 # detect objects in the image (with overlay)
-detections = net.Detect(img, overlay=opt.overlay)
+detections = net.Detect(img, overlay=opt.overlay,force_rgb=True)
 print("time for detection: {}".format(time.time()-start))
 # print the detections
 print("detected {:d} objects in image".format(len(detections)))
