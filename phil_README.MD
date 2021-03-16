@@ -7,10 +7,10 @@
 
 
 # Running cmake install
-cd /jetson-inference/
+cd /phil-jetson-inference/
 cd build && \
 cmake ../ && \
 make -j$(nproc) && \
 make install && \
-/bin/bash -O extglob -c "cd /jetson-inference/build; rm -rf -v !(aarch64|download-models.*)" && \
+/bin/bash -O extglob -c "cd /phil-jetson-inference/build; rm -rf -v !(aarch64|download-models.*)" && \
 rm -rf /var/lib/apt/lists/*

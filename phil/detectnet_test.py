@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(description="Locate objects in a live camera st
                                  jetson.utils.videoSource.Usage() + jetson.utils.videoOutput.Usage() + jetson.utils.logUsage())
 
 parser.add_argument("--input_image", type=str, default="", nargs='?', help="URI of the input stream")
-parser.add_argument("--network", type=str, default="ssd-mobilenet-v2", help="pre-trained model to load (see below for options)")
+parser.add_argument("--network", type=str, default="ssd-custom", help="pre-trained model to load (see below for options)")
 parser.add_argument("--overlay", type=str, default="box,labels,conf", help="detection overlay flags (e.g. --overlay=box,labels,conf)\nvalid combinations are:  'box', 'labels', 'conf', 'none'")
 parser.add_argument("--threshold", type=float, default=0.2, help="minimum detection threshold to use") 
 
