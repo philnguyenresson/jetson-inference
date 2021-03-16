@@ -6,11 +6,8 @@
 
 
 
-# Running cmake install
-cd /phil-jetson-inference/
+# Running cmake install (from within the phil-jetson-inference folder)
 cd build && \
 cmake ../ && \
 make -j$(nproc) && \
-make install && \
-/bin/bash -O extglob -c "cd /phil-jetson-inference/build; rm -rf -v !(aarch64|download-models.*)" && \
-rm -rf /var/lib/apt/lists/*
+make install 
