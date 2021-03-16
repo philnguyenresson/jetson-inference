@@ -7,7 +7,10 @@
 
 
 # Running cmake install (from within the phil-jetson-inference folder)
+```
+mkdir build && \
 cd build && \
 cmake ../ && \
 make -j$(nproc) && \
 make install 
+```
